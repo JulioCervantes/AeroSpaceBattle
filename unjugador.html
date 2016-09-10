@@ -1,0 +1,525 @@
+<html>
+	<head>
+		<title></title>
+		<script src="tile1.js" type="text/javascript">
+		</script>
+		<script src="juego1.js" type="text/javascript">
+		</script>
+		<script>
+		
+			//Sprite del avion del jugador
+			var sprites = new Array();
+			sprites["NORMAL"] = new Array();
+			sprites["NORMAL"].x			=8;
+			sprites["NORMAL"].y			=8;
+			sprites["NORMAL"].ancho		=32;
+			sprites["NORMAL"].alto		=32;
+			sprites["NORMAL"].animacion	= ["NORMAL","NORMAL_1"];
+			
+			sprites["IZQUIERDA"] = new Array();
+			sprites["IZQUIERDA"].x			=128;
+			sprites["IZQUIERDA"].y			=8;
+			sprites["IZQUIERDA"].ancho		=24;
+			sprites["IZQUIERDA"].alto		=32;
+			sprites["IZQUIERDA"].animacion	= false;
+
+			sprites["DERECHA"] = new Array();
+			sprites["DERECHA"].x			=160;
+			sprites["DERECHA"].y			=8;
+			sprites["DERECHA"].ancho		=24;
+			sprites["DERECHA"].alto			=32;
+			sprites["DERECHA"].animacion	= false;
+			
+			sprites["NORMAL_1"] = new Array();
+			sprites["NORMAL_1"].x			=48;
+			sprites["NORMAL_1"].y			=8;
+			sprites["NORMAL_1"].ancho		=32;
+			sprites["NORMAL_1"].alto		=32;
+			sprites["NORMAL_1"].animacion	= false;
+			//sprite["NORMAL"].x
+			//sprite["NORMAL"].y
+			//sprite["NORMAL"].ancho
+			//sprite["NORMAL"].alto
+			//sprite["NORMAL"].animacion= {"NORMAL","NORMAL_1","NORMAL_2"}
+		
+		
+			var spritesEnemigo = new Array();
+			spritesEnemigo["E1"] = new Array();
+			spritesEnemigo["E1"].x			=4;
+			spritesEnemigo["E1"].y			=4;
+			spritesEnemigo["E1"].ancho		=32;
+			spritesEnemigo["E1"].alto		=32;
+			spritesEnemigo["E1"].animacion	= false;
+			spritesEnemigo["E2"] = new Array();
+			spritesEnemigo["E2"].x			=4;
+			spritesEnemigo["E2"].y			=37;
+			spritesEnemigo["E2"].ancho		=32;
+			spritesEnemigo["E2"].alto		=32;
+			spritesEnemigo["E2"].animacion	= false;
+			spritesEnemigo["E3"] = new Array();
+			spritesEnemigo["E3"].x			=4;
+			spritesEnemigo["E3"].y			=103;
+			spritesEnemigo["E3"].ancho		=32;
+			spritesEnemigo["E3"].alto		=32;
+			spritesEnemigo["E3"].animacion	= false;
+			
+			
+			var enemigos	= new Array();//Arreglo de objetos enemigos
+		
+			var juego;
+			var tilemap;			
+			 
+			
+			window.onload=function(){
+				tilemap = new Tilemap("escenario",15,25,32,16,tileset);
+			
+			
+				srcEnemigos = new Sprites("enemigos",spritesEnemigo,"E1");
+				srcEnemigos2 = new Sprites("enemigos",spritesEnemigo,"E2");
+				srcEnemigos3 = new Sprites("enemigos",spritesEnemigo,"E3");
+				//alert(srcEnemigos.img);
+				enemigos[0]		= new Enemigo(srcEnemigos,100,100,32,32,"x","y+1");
+				enemigos[1]		= new Enemigo(srcEnemigos,400,34,32,32,"movimientoZigZagX(x,y)","y+1");
+				enemigos[2]		= new Enemigo(srcEnemigos,130,-134,32,32,"x+Math.pow(-1,x)","y+1");
+				enemigos[3]		= new Enemigo(srcEnemigos,170,-134,32,32,"movimientoZigZagX(x,y)","movimientoZigZagX(y,x)");
+				enemigos[4]		= new Enemigo(srcEnemigos,270,-334,32,32,"movimientoZigZagX(x,y)","movimientoZigZagX(y,x)");
+				enemigos[5]		= new Enemigo(srcEnemigos,170,-534,32,32,"movimientoZigZagX(x,y)",
+				"(y<100)?y+1:movimientoZigZagX(y,x)");
+				enemigos[6]		= new Enemigo(srcEnemigos,170,-434,32,32,"movimientoZigZagX(x,y)","(y<100 || (y>100 && y%15>5))?y+3:movimientoZigZagX(y,x)");
+				enemigos[7]		= new Enemigo(srcEnemigos,370,-834,32,32,"movimientoZigZagX(x,y)","(y<100 || (y>10 && y%12>3))?y+2:movimientoZigZagX(y,x)");
+				enemigos[8]		= new Enemigo(srcEnemigos2,270,-834,32,32,"movimientoZigZagX(x,y)","(y<100 || (y>10 && y%12>3))?y+2:movimientoZigZagX(y,x)");
+				enemigos[9]		= new Enemigo(srcEnemigos2,270,-1034,32,32,"2*movimientoZigZagX(x,y)","2*( (y<100 || (y>10 && y%12>3))?y+5:movimientoZigZagX(y,x)+3)");
+				enemigos[10]		= new Enemigo(srcEnemigos3,170,-1234,32,32,"2*movimientoZigZagX(x,y)","2*( (y<100 || (y>10 && y%12>3))?y+5:movimientoZigZagX(y,x)+3)");
+				enemigos[11]		= new Enemigo(srcEnemigos3,190,-1234,32,32,"2*movimientoZigZagX(x,y)","2*( (y<100 || (y>10 && y%12>3))?y+5:movimientoZigZagX(y,x)+3)");
+				for(i=12;i<18;i++){
+					enemigos[i]		= new Enemigo(srcEnemigos3,(i*2.2),-1294-(i*4),32,32,"movimientoZigZagX(x,y)","(y<100 || (y>10 && y%12>3))?y+2:movimientoZigZagX(y,x)");
+				}
+				for(i=18;i<28;i++){
+					enemigos[i]		= new Enemigo(srcEnemigos3,-90+(i*7),-1634-(i*3.4),32,32,"movimientoZigZagX(x,y)","(y<100 || (y>100 && y%15>5))?y+3:movimientoZigZagX(y,x)");
+				}
+				for(i=28;i<38;i++){
+					enemigos[i]		= new Enemigo(srcEnemigos2,-400,-(3*i*i),32,32,"movimientoZigZagX(x,y)","(y<100 || (y>100 && y%15>5))?y+3:movimientoZigZagX(y,x)");
+				}
+				
+				jugador = new Jugador(new Sprites("personaje",sprites,"NORMAL"),enemigos);
+			
+			
+			
+			
+			
+			
+				juego = new Game("gameScreen","2d",22,tilemap,jugador,enemigos);
+				
+				
+				juego.iniciarJuego();
+				//Pide el canvas en donde tendra vida el juego
+			}
+		</script>
+		<!--
+		<script>
+		
+			var canvas;
+			var context;
+			var imagen;
+			var incremento=10;
+			var x=0;
+			var y=0;
+			var k=0;
+			var f=15;
+			var c=25;
+			var nSprite = 0;
+			var tamTile = 32;
+			var numTiles = 16;
+			var tiempoJuego = 0;
+			var keys = {};
+			var arreglo = new Array();
+			
+			posX = 400;//Posicion en X del avion
+			velocidadX = 1;//Posicion en X del avion
+			velocidadY = 1;//Posicion en X del avion
+			posY = 440;//Posicion en X del avion
+			
+			arreglo[0]={x:0,y:30,ancho:20,alto:30};
+			arreglo[1]={x:30,y:30,ancho:20,alto:20};
+			arreglo[2]={x:60,y:60,ancho:20,alto:20};
+			arreglo[3]={x:90,y:90,ancho:20,alto:20};
+			arreglo[4]={x:420,y:90,ancho:50,alto:20};
+			
+			var personaje={x:400,y:440,ancho:54,alto:54};
+			
+			
+			
+			var iniciar=false;
+			document.onkeydown = function(e) { keys[e.which] = true;
+				if(iniciar==false){
+					iniciarJuego();
+					iniciar=true;
+					document.getElementById("soundGame").play();
+				}					
+			}
+			document.onkeyup = function(e) { keys[e.which] = false }
+			
+			posX = 400;//Posicion en X del avion
+			velocidadX = 1;//Posicion en X del avion
+			velocidadY = 1;//Posicion en X del avion
+			posY = 440;//Posicion en X del avion
+			var tipoProyectil=0;//Proyectil basico activado por defecto
+			
+			{
+			var proyectil = [ //10 proyectiles
+				0,0,false,  //0
+				0,0,false,  //
+				0,0,false,  
+				0,0,false,  
+				0,0,false,  
+				0,0,false,  
+				0,0,false,  
+				0,0,false,  
+				0,0,false,  
+				0,0,false
+			];//PosX y PosY de cada proyectil + si a sido lanzado o no (visibilidad y deteccion de colision)
+			}
+			
+			var ultimoProyectilLanzado=-1;
+			
+			
+			
+			{//TILEMAP, puse las llaves para que el notepad pueda contraer las lineas de codigo de abajo
+			var tileMap =
+				[
+				//Fin del mapa
+				[0,0,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,10,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,10,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,114,115,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,130,131,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,114,115,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,130,131,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,114,115,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,130,131,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+				[0,0,0,0,0,0,114,115,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+				[0,0,0,0,0,0,130,131,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2]
+				//Hacia arriba inicia el mapa
+			]; 
+			}
+			
+			/*iniciarJuego = function(){
+				setInterval(function(){
+				//alert("TODO BIEN");
+				actualizar();	
+				//dibujar();
+				},1000/30);//30 fps
+			};*/
+			/*window.onload = function(){
+				canvas = document.getElementById('gameScreen');
+				context = canvas.getContext('2d');
+				context.strokeStyle="#ff0000";
+				context.strokeText("PULSA UNA TECLA PARA COMENZAR",275,468);
+			}*/
+			
+			
+			function dibujar(){
+				/*k++;
+				canvas = document.getElementById('gameScreen');
+				context = canvas.getContext('2d');
+				context.clearRect(0,0,context.canvas.width,context.canvas.height);//Borramos todo la pantalla
+				imagen = document.getElementById('Personaje');
+				context.drawImage(imagen,x,y,150,110,40,100,150,110);
+				x+=161;
+				if(x>420){
+					y+=123;
+					x=0;
+				}
+				if(k==8){
+					x=0;
+					y=0;
+					k=0;
+				}*/
+			}
+			var fin=false;
+			function actualizar(){
+				canvas = document.getElementById('gameScreen');
+				context = canvas.getContext('2d');
+				context.clearRect(0,0,context.canvas.width,context.canvas.height);//Borramos todo la pantalla
+				
+				imagen = document.getElementById('escenario');
+				for(j=0;j<f;j++){
+					for(i=0;i<c;i++){
+						if((((tileMap).length+9)-j-incremento)<0){
+							Tile = tileMap[j][i];
+							fin =true;
+						}else{
+							Tile = tileMap[((tileMap).length+9)-j-incremento][i];
+						}
+	//					alert(((tileMap).length-1)-incremento+j);
+						columna = Tile%numTiles;
+						//alert(columna);
+						//Tile = tileMap[j][(i+desp)%20];
+						fila = (Tile/numTiles)|0;
+						//alert(fila);
+						
+						sx = (columna * tamTile);//(columna%numTilesC)*tamTile;
+						sy = (fila * tamTile);//(fila%numTilesF)*tamTile;
+						x  = i * tamTile;
+						y  = (f-1-j) * tamTile;
+
+						context.drawImage(imagen,sx,sy,32,32,x,y,32,32);
+					}
+				}
+				if(fin){
+					despGameOver(context);
+						//	break;
+				}
+				imagen = document.getElementById("personaje");
+				
+				animacionAvion(context,imagen);
+				for(i=0;i<arreglo.length;i++){
+					dibujaEnemigos(arreglo[i]);
+				} 
+				
+				
+				
+				
+				//alert((tileMap).length);
+				if(tiempoJuego%12==0)
+					incremento++;
+				tiempoJuego++;
+				//alert(incremento);
+			}
+			
+			function animacionAvion(context,imagen){
+					auxX = posX;
+					auxY = posY;
+					if(keys[37]){
+						nSprite=3;//izquierda
+						posX-=(posX<=10)?posX:velocidadX;
+					}
+					if(keys[39]){
+						nSprite=4;//derecha
+						posX+=(posX>=750)?0:velocidadX;
+					}
+					if(keys[38]){//Arriba
+						posY-=(posY<=10)?0:velocidadY;
+//						posY-=velocidadY;
+						velocidadY+=0.25;
+					}
+					if(keys[40]){//Abajo
+						posY+=(posY>=440)?0:velocidadY;
+						velocidadY+=0.25;
+					}
+					if(!keys[38] && !keys[40]){
+						velocidadY=1;
+					}
+					
+					for(i=0;i<arreglo.length;i++){
+					if(intersects(arreglo[i],personaje)){
+//						alert("muero!");
+						
+						posX = 400;
+						posY = 400;
+					}
+					//console.log(intersects(dibujaEnemigos(arreglo[i]),personaje));
+					} 
+					
+					
+					switch(nSprite){
+						case 0:
+							context.drawImage(imagen,8,8,32,32,posX,posY,54,54);
+							velocidadX=1;
+							break;
+						case 1:
+							context.drawImage(imagen,48,8,32,32,posX,posY,54,54);
+							velocidadX=1;
+							break;
+						case 2:
+							context.drawImage(imagen,88,8,32,32,posX,posY,54,54);
+							velocidadX=1;
+							break;
+						case 3:
+							//El caso 3 es cuando el avion se mueve hacia el lado derecha
+							context.drawImage(imagen,128,8,24,32,posX,posY,54,54);
+							velocidadX+=0.45;
+							break;
+						case 4:
+							//El caso 3 es cuando el avion se mueve hacia el lado derecha
+							context.drawImage(imagen,160,8,24,32,posX,posY,54,54);
+							velocidadX+=0.45;
+							break;
+					}
+					if(!keys[32]){
+						//disparar(posX,posY);//De donde sale el proyectil
+					}
+					
+					
+					nSprite++;
+					if(nSprite>2){
+						nSprite=0;
+					}
+					personaje.x = posX;
+					personaje.y = posY;
+					
+			}
+			
+			function dibujaEnemigos(obj){
+				context.fillRect(obj.x,obj.y,obj.ancho,obj.alto);
+			}
+			
+			function despGameOver(context){
+				context.font= "42px arial";
+//				context.lineWidth=3;
+				context.strokeStyle="#ff0000";
+				context.strokeText("GAME OVER",275,468);
+			}
+			/*
+			function disparar(posX,posY){
+				ultimoProyectilLanzado++;
+				if(ultimoProyectilLanzado==10){
+					ultimoProyectilLanzado=0;
+				}
+				proyectil[ultimoProyectilLanzado][]
+			}*/
+			
+			
+			function intersects(obj1,obj2){
+				if(obj1.x + obj1.ancho < obj2.x)
+					return false;
+				if(obj1.y + obj1.alto < obj2.y)
+					return false;
+				if(obj1.x > obj2.x + obj2.ancho)
+					return false;
+				if(obj1.y > obj2.y + obj2.ancho)
+					return false;
+				return true;
+			}
+			
+			
+			
+			
+		</script>
+		-->
+	</head>
+	<body bgcolor="black">
+		<canvas id="gameScreen" width="800" height="480" style="background-color:white"></canvas>
+		
+		<!--Imagen utilizada para el sprite-->
+		<img id="personaje" src="sprites2.png" style="display:none"></img>
+		<!--Imagen utilizada para el Tile-->	
+		<img id="enemigos" src="enemigos.png" style="display:none"></img>
+		<!--Imagen utilizada para el Tile-->	
+		<img id="escenario" src="tilemap.png" style="display:none"></img>
+		<audio id="shootSound" src="gunshot.mp3">
+		</audio>
+		<audio id="soundGame" src="preview.mp3" loop>
+		</audio>
+	</body>
+	
+</html>
